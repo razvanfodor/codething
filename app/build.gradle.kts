@@ -18,6 +18,8 @@ repositories {
 
 dependencies {
     // This dependency is used by the application.
+    implementation("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation(libs.guava)
     testImplementation("org.hamcrest:hamcrest:2.2")
 }

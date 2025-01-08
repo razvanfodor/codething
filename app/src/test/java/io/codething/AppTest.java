@@ -3,18 +3,65 @@
  */
 package io.codething;
 
-import org.junit.jupiter.api.Assertions;
+import io.codething.activity.Activity;
+import io.codething.activity.RunningActivity;
+import io.codething.activity.SwimmingActivity;
+import io.codething.activity.WalkingActivity;
+import io.codething.user.User;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import org.hamcrest.Matchers.*;
 
 class TrackerAppTest {
-    @Test void appHasThings() {
+    @Test
+    void appHasThings() {
         TrackerApp app = new TrackerApp();
-        
-        assertThat(app.totalActivities(), is(0));
+
+        assertThat(app.totalActivities(), is(3));
+    }
+
+    @Test
+    void testTotalActivities() {
+        TrackerApp app = new TrackerApp();
+        app.clearData();
+        User user1 = new User().setName("John").setWeightInKg(70).setHeightInCm(175);
+        User user2 = new User().setName("Jane").setWeightInKg(60).setHeightInCm(165);
+
+        user1.addActivity(new RunningActivity(user1.getWeightInKg()).setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0)));
+        user2.addActivity(new WalkingActivity(user2.getWeightInKg())
+                        .setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0)))
+                .addActivity(new SwimmingActivity()
+                        .setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0)));
+
+        app.addUser(user1).addUser(user2);
+
+        assertEquals(3, app.totalActivities());
+    }
+
+    @Test
+    void testTotalActiveCalories() {
+        TrackerApp app = new TrackerApp();
+        app.clearData();
+        User user1 = new User().setName("John").setWeightInKg(70).setHeightInCm(175);
+        User user2 = new User().setName("Jane").setWeightInKg(60).setHeightInCm(165);
+
+        Activity activity1 = new RunningActivity(user1.getWeightInKg())
+                .setDistanceInMeters(1000)
+                .setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        Activity activity2 = new WalkingActivity(user2.getWeightInKg())
+                .setDistanceInMeters(1000)
+                .setElevationGain(100)
+                .setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+
+        user1.addActivity(activity1);
+        user2.addActivity(activity2);
+
+        app.addUser(user1).addUser(user2);
+
+        assertEquals(730, app.totalActiveCalories());
     }
 }
